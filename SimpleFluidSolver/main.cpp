@@ -6,6 +6,7 @@
 #include <SFML/System.hpp>
 
 #include "Macros.h"
+#include "Particle.h"
 
 using namespace sf;
 using namespace std;
@@ -65,7 +66,7 @@ int main(int argc, char **argv)
 			while (getline(ss, token, ';'))
 			{
 				istringstream value(token);
-				value >> u[Index];
+				value >> u[Index++];
 			}
 		}
 		u_file.close();
@@ -82,13 +83,33 @@ int main(int argc, char **argv)
 			while (getline(ss, token, ';'))
 			{
 				istringstream value(token);
-				value >> v[Index];
+				value >> v[Index++];
 			}
 		}
 		v_file.close();
 	}
 	
 	cout << "End reading Velocity Field..." << endl;
+
+
+	cout << "Start setting particles..." << endl;
+	Particle* Particles = new Particle[NUM_PARTICLES];
+
+	srand(static_cast <unsigned> (time(0)));
+
+	for (Uint32 i = 0; i < NUM_PARTICLES; i++)
+	{
+		float r_i = static_cast <float>(rand()) / static_cast <float> (RAND_MAX);
+		float r_j = static_cast <float>(rand()) / static_cast <float> (RAND_MAX);
+
+		Particles[i].SetParticle(
+			Vector2f(0, 0),
+			Vector2f(window.getSize().x, window.getSize().y),
+			GRID_SIZE * r_i, GRID_SIZE * r_j,
+			u, v);
+	}
+
+	cout << "End setting particles..." << endl;
 
 	while (window.isOpen())
 	{
@@ -112,11 +133,18 @@ int main(int argc, char **argv)
 			window.clear(Color::Black);
 			FinalSprite.setTexture(Canvas.getTexture());
 			window.draw(FinalSprite);
+			
+			for (Uint32 i = 0; i < NUM_PARTICLES; i++)
+				Particles[i].Update(window);
 
 			// end the current frame
 			window.display();
 		}
 	}
+
+	delete[] u;
+	delete[] v;
+	delete[] Particles;
 
 	return 0;
 }

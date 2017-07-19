@@ -1,7 +1,7 @@
 #ifndef _MACROS_H_
 #define _MACROS_H_
 
-
+#define NUM_PARTICLES 300
 #define GRID_SIZE 512 
 #define PLOT_RESOLUTION GRID_SIZE
 #define SINGLE_PRECISION 0
